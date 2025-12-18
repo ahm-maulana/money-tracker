@@ -1,0 +1,161 @@
+{
+  "users": [
+    {
+      "id": "550e8400-e29b-41d4-a716-446655440001",
+      "email": "john.doe@example.com",
+      "name": "John Doe",
+      "password": "hashed_password_123",
+      "createdAt": "2024-01-01T10:00:00Z",
+      "updatedAt": "2024-01-15T10:00:00Z"
+    }
+  ],
+  "categories": [
+    {
+      "id": "660e8400-e29b-41d4-a716-446655440001",
+      "name": "Salary",
+      "userId": "550e8400-e29b-41d4-a716-446655440001"
+    },
+    {
+      "id": "660e8400-e29b-41d4-a716-446655440002",
+      "name": "Freelance",
+      "userId": "550e8400-e29b-41d4-a716-446655440001"
+    },
+    {
+      "id": "660e8400-e29b-41d4-a716-446655440003",
+      "name": "Food & Groceries",
+      "userId": "550e8400-e29b-41d4-a716-446655440001"
+    },
+    {
+      "id": "660e8400-e29b-41d4-a716-446655440004",
+      "name": "Transportation",
+      "userId": "550e8400-e29b-41d4-a716-446655440001"
+    },
+    {
+      "id": "660e8400-e29b-41d4-a716-446655440005",
+      "name": "Entertainment",
+      "userId": "550e8400-e29b-41d4-a716-446655440001"
+    },
+    {
+      "id": "660e8400-e29b-41d4-a716-446655440006",
+      "name": "Utilities",
+      "userId": "550e8400-e29b-41d4-a716-446655440001"
+    },
+    {
+      "id": "660e8400-e29b-41d4-a716-446655440007",
+      "name": "Healthcare",
+      "userId": "550e8400-e29b-41d4-a716-446655440001"
+    }
+  ],
+  "transactions": [
+    {
+      "id": "770e8400-e29b-41d4-a716-446655440001",
+      "amount": 500000,
+      "type": "INCOME",
+      "description": "Monthly salary from tech company",
+      "date": "2024-01-01T09:00:00Z",
+      "categoryId": "660e8400-e29b-41d4-a716-446655440001",
+      "userId": "550e8400-e29b-41d4-a716-446655440001",
+      "createdAt": "2024-01-01T09:00:00Z",
+      "updatedAt": "2024-01-01T09:00:00Z"
+    },
+    {
+      "id": "770e8400-e29b-41d4-a716-446655440002",
+      "amount": 150000,
+      "type": "INCOME",
+      "description": "Freelance web development project",
+      "date": "2024-01-05T14:30:00Z",
+      "categoryId": "660e8400-e29b-41d4-a716-446655440002",
+      "userId": "550e8400-e29b-41d4-a716-446655440001",
+      "createdAt": "2024-01-05T14:30:00Z",
+      "updatedAt": "2024-01-05T14:30:00Z"
+    },
+    {
+      "id": "770e8400-e29b-41d4-a716-446655440003",
+      "amount": 75000,
+      "type": "INCOME",
+      "description": "Part-time consulting gig",
+      "date": "2024-01-10T11:00:00Z",
+      "categoryId": "660e8400-e29b-41d4-a716-446655440002",
+      "userId": "550e8400-e29b-41d4-a716-446655440001",
+      "createdAt": "2024-01-10T11:00:00Z",
+      "updatedAt": "2024-01-10T11:00:00Z"
+    },
+    {
+      "id": "770e8400-e29b-41d4-a716-446655440004",
+      "amount": 50000,
+      "type": "INCOME",
+      "description": "Cash payment for mobile app design",
+      "date": "2024-01-15T16:45:00Z",
+      "categoryId": "660e8400-e29b-41d4-a716-446655440002",
+      "userId": "550e8400-e29b-41d4-a716-446655440001",
+      "createdAt": "2024-01-15T16:45:00Z",
+      "updatedAt": "2024-01-15T16:45:00Z"
+    },
+    {
+      "id": "770e8400-e29b-41d4-a716-446655440005",
+      "amount": 25000,
+      "type": "INCOME",
+      "description": "Sold old laptop online",
+      "date": "2024-01-20T12:00:00Z",
+      "categoryId": "660e8400-e29b-41d4-a716-446655440002",
+      "userId": "550e8400-e29b-41d4-a716-446655440001",
+      "createdAt": "2024-01-20T12:00:00Z",
+      "updatedAt": "2024-01-20T12:00:00Z"
+    },
+    {
+      "id": "770e8400-e29b-41d4-a716-446655440006",
+      "amount": 45000,
+      "type": "EXPENSE",
+      "description": "Weekly grocery shopping at supermarket",
+      "date": "2024-01-02T18:30:00Z",
+      "categoryId": "660e8400-e29b-41d4-a716-446655440003",
+      "userId": "550e8400-e29b-41d4-a716-446655440001",
+      "createdAt": "2024-01-02T18:30:00Z",
+      "updatedAt": "2024-01-02T18:30:00Z"
+    },
+    {
+      "id": "770e8400-e29b-41d4-a716-446655440007",
+      "amount": 15000,
+      "type": "EXPENSE",
+      "description": "Monthly train pass",
+      "date": "2024-01-01T08:00:00Z",
+      "categoryId": "660e8400-e29b-41d4-a716-446655440004",
+      "userId": "550e8400-e29b-41d4-a716-446655440001",
+      "createdAt": "2024-01-01T08:00:00Z",
+      "updatedAt": "2024-01-01T08:00:00Z"
+    },
+    {
+      "id": "770e8400-e29b-41d4-a716-446655440008",
+      "amount": 35000,
+      "type": "EXPENSE",
+      "description": "Concert tickets with friends",
+      "date": "2024-01-12T19:00:00Z",
+      "categoryId": "660e8400-e29b-41d4-a716-446655440005",
+      "userId": "550e8400-e29b-41d4-a716-446655440001",
+      "createdAt": "2024-01-12T19:00:00Z",
+      "updatedAt": "2024-01-12T19:00:00Z"
+    },
+    {
+      "id": "770e8400-e29b-41d4-a716-446655440009",
+      "amount": 120000,
+      "type": "EXPENSE",
+      "description": "Monthly electricity and water bills",
+      "date": "2024-01-05T10:00:00Z",
+      "categoryId": "660e8400-e29b-41d4-a716-446655440006",
+      "userId": "550e8400-e29b-41d4-a716-446655440001",
+      "createdAt": "2024-01-05T10:00:00Z",
+      "updatedAt": "2024-01-05T10:00:00Z"
+    },
+    {
+      "id": "770e8400-e29b-41d4-a716-446655440010",
+      "amount": 85000,
+      "type": "EXPENSE",
+      "description": "Doctor consultation and medicine",
+      "date": "2024-01-18T14:15:00Z",
+      "categoryId": "660e8400-e29b-41d4-a716-446655440007",
+      "userId": "550e8400-e29b-41d4-a716-446655440001",
+      "createdAt": "2024-01-18T14:15:00Z",
+      "updatedAt": "2024-01-18T14:15:00Z"
+    }
+  ]
+}
