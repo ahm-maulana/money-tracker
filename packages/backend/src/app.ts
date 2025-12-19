@@ -5,6 +5,7 @@ import cors from "cors";
 import compression from "compression";
 import { config } from "./config/config";
 import rateLimit from "express-rate-limit";
+import { errorHandler } from "./middleware/error.middleware";
 export const createApp = (prisma: PrismaClient) => {
   const app = express();
 
@@ -51,6 +52,7 @@ export const createApp = (prisma: PrismaClient) => {
   });
 
   // Error handler
+  app.use(errorHandler);
 
   return app;
 };
