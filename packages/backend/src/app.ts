@@ -6,7 +6,23 @@ import compression from "compression";
 import { config } from "./config/config";
 import rateLimit from "express-rate-limit";
 import { errorHandler } from "./middleware/error.middleware";
+import { AuthRepository } from "./repositories/auth.repository";
+import { AuthService } from "./services/auth.service";
+import { AuthController } from "./controllers/auth.controller";
+import { createAuthRoutes } from "./routes/auth.routes";
+import cookieParser from "cookie-parser";
+import { RefreshTokenRepository } from "./repositories/refreshToken.repository";
 export const createApp = (prisma: PrismaClient) => {
+  // Repositories
+  const authRepository = new AuthRepository(prisma);
+  const refreshTokenRepository = new RefreshTokenRepository(prisma);
+
+  // Services
+  const authService = new AuthService(authRepository, refreshTokenRepository);
+
+  // Controller
+  const authController = new AuthController(authService);
+
   const app = express();
 
   // Security middleware
@@ -18,6 +34,9 @@ export const createApp = (prisma: PrismaClient) => {
     })
   );
   app.use(compression());
+
+  // Cookie parser middleware
+  app.use(cookieParser());
 
   // Rate limiter
   const limiter = rateLimit({
@@ -32,6 +51,8 @@ export const createApp = (prisma: PrismaClient) => {
   app.use(express.urlencoded({ extended: true }));
 
   // Endpoints
+  app.use("/api/v1/auth", createAuthRoutes(authController));
+
   app.use("/", (req, res) => {
     res.json({
       message: "Money Tracker App API",
