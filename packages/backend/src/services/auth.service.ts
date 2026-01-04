@@ -2,7 +2,7 @@ import { AuthRepository } from "../repositories/auth.repository";
 import { ConflictError, UnauthorizedError } from "../utils/error.util";
 import { LoginInput, RegisterInput } from "../validation/auth.validation";
 import bcrypt from "bcrypt";
-import { JwtUtil, TokenPair } from "../utils/jwt.util";
+import { JwtUtil } from "../utils/jwt.util";
 import {
   AuthResponse,
   excludePassword,
@@ -18,7 +18,7 @@ export class AuthService {
   ) {}
 
   private async createRefreshToken(token: string, userId: string) {
-    return this.refreshTokenRepository.create({
+    return this.refreshTokenRepository.upsert({
       token,
       userId,
       expiresAt: new Date(Date.now() + config.jwt.refresh.expiresIn * 1000),
@@ -37,7 +37,7 @@ export class AuthService {
 
     // Password hashing
     const saltRounds = 10;
-    const hashedPassword = await bcrypt.hash(data.password, saltRounds);
+    const hashedPassword = await bcrypt.hash(password, saltRounds);
 
     // Create user
     const user = await this.authRepository.create({
@@ -81,7 +81,7 @@ export class AuthService {
     };
   }
 
-  async refresh(refreshToken: string): Promise<TokenPair> {
+  async refresh(refreshToken: string): Promise<AuthResponse> {
     // Verify old token
     const decoded = JwtUtil.verifyRefreshToken(refreshToken);
 
@@ -92,17 +92,17 @@ export class AuthService {
       throw new UnauthorizedError("User not found.");
     }
 
-    // Check if old token exists in database and is not revoked
+    // Check if old token exists in database
     const storedToken = await this.refreshTokenRepository.findByToken(
       refreshToken
     );
 
-    if (!storedToken || storedToken.isRevoked) {
+    if (!storedToken) {
       throw new UnauthorizedError("Invalid refresh token.");
     }
 
-    // Revoke old token
-    const revokedToken = await this.refreshTokenRepository.revoke(refreshToken);
+    // Delete old token
+    await this.refreshTokenRepository.delete(refreshToken);
 
     // Generate new token pair
     const token = JwtUtil.generateTokenPair({
@@ -114,10 +114,20 @@ export class AuthService {
     // Store new refresh token
     await this.createRefreshToken(token.refreshToken, user.id);
 
-    return token;
+    return {
+      user: excludePassword(user),
+      token: {
+        accessToken: token.accessToken,
+        refreshToken: token.refreshToken,
+      },
+    };
   }
 
   async logout(token: string): Promise<void> {
-    await this.refreshTokenRepository.revoke(token);
+    const existingToken = await this.refreshTokenRepository.findByToken(token);
+
+    if (existingToken) {
+      await this.refreshTokenRepository.delete(token);
+    }
   }
 }

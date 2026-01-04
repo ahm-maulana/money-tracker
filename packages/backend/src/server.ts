@@ -16,7 +16,7 @@ const prisma = new PrismaClient({ adapter });
 const app = createApp(prisma);
 
 // PORT
-const PORT = config.port || 3000;
+const PORT = config.port;
 
 // Graceful shutdown
 const gracefulShutdown = async (signal: string) => {

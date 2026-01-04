@@ -16,6 +16,18 @@ export class RefreshTokenRepository extends BaseRepository {
     });
   }
 
+  async upsert(data: {
+    token: string;
+    userId: string;
+    expiresAt: Date;
+  }): Promise<RefreshToken> {
+    return this.prisma.refreshToken.upsert({
+      where: { token: data.token },
+      update: {},
+      create: data,
+    });
+  }
+
   async findByToken(token: string): Promise<RefreshToken | null> {
     return this.prisma.refreshToken.findUnique({
       where: {
@@ -24,13 +36,10 @@ export class RefreshTokenRepository extends BaseRepository {
     });
   }
 
-  async revoke(token: string): Promise<RefreshToken> {
-    return this.prisma.refreshToken.update({
+  async delete(token: string): Promise<RefreshToken> {
+    return this.prisma.refreshToken.delete({
       where: {
         token,
-      },
-      data: {
-        isRevoked: true,
       },
     });
   }

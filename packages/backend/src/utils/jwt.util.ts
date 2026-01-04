@@ -41,6 +41,7 @@ export class JwtUtil {
     const payload: Omit<JwtPayload, "iat" | "exp"> = {
       userId: user.id,
       email: user.email,
+      jti: crypto.randomUUID(), // Unique token ID - prevents duplicates
     };
 
     const signOptions: SignOptions = {

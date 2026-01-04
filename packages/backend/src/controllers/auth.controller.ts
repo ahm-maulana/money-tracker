@@ -41,7 +41,7 @@ export class AuthController {
       ResponseUtil.error(res, "Refresh token is required", 401);
     }
 
-    const token = await this.authService.refresh(cookies.jwt);
+    const { user, token } = await this.authService.refresh(cookies.jwt);
 
     // Set refresh token as httpOnly cookie
     res.cookie("jwt", token.refreshToken, {
@@ -50,6 +50,7 @@ export class AuthController {
     });
 
     ResponseUtil.success(res, {
+      user,
       token: token.accessToken,
     });
   };

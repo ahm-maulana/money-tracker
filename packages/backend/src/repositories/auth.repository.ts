@@ -1,4 +1,4 @@
-import { PrismaClient, RefreshToken, User } from "../generated/prisma/client";
+import { PrismaClient, User } from "../generated/prisma/client";
 import { BaseRepository } from "./base.repository";
 
 export class AuthRepository extends BaseRepository {
@@ -24,17 +24,6 @@ export class AuthRepository extends BaseRepository {
     return this.prisma.user.findUnique({
       where: {
         id: userId,
-      },
-    });
-  }
-
-  async revokeToken(token: string): Promise<RefreshToken> {
-    return this.prisma.refreshToken.update({
-      where: {
-        token,
-      },
-      data: {
-        isRevoked: true,
       },
     });
   }
