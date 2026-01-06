@@ -1,5 +1,4 @@
-import { Request } from 'express';
-import { JwtPayload } from 'jsonwebtoken';
+import { Request } from "express";
 
 // Base API Response
 export interface ApiResponse<T = any> {
@@ -15,7 +14,7 @@ export interface ApiResponse<T = any> {
 
 // Paginated Response
 export interface PaginatedResponse<T> extends ApiResponse<T[]> {
-  meta: ApiResponse['meta'] & {
+  meta: ApiResponse["meta"] & {
     pagination: {
       page: number;
       limit: number;
@@ -29,7 +28,7 @@ export interface PaginatedResponse<T> extends ApiResponse<T[]> {
 
 // Express Request with User
 export interface AuthenticatedRequest extends Request {
-  user: JwtPayload & { id: string; email: string };
+  user: { id: string; email: string; name: string };
 }
 
 // Query Parameters
@@ -37,12 +36,12 @@ export interface PaginationQuery {
   page?: string;
   limit?: string;
   sortBy?: string;
-  sortOrder?: 'asc' | 'desc';
+  sortOrder?: "asc" | "desc";
 }
 
 export interface TransactionQuery extends PaginationQuery {
   categoryId?: string;
-  type?: 'INCOME' | 'EXPENSE';
+  type?: "INCOME" | "EXPENSE";
   startDate?: string;
   endDate?: string;
   search?: string;

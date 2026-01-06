@@ -7,7 +7,7 @@ export const errorHandler = (
   error: Error | AppError,
   req: Request,
   res: Response,
-  next: NextFunction
+  _: NextFunction
 ): void => {
   // Log the error
   console.error("Error occurred:", {
