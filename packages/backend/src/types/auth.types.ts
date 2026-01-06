@@ -14,3 +14,9 @@ export interface AuthResponse {
     refreshToken: string;
   };
 }
+
+export interface SessionResponse {
+  isAuthenticated: boolean;
+  token?: string;
+  user?: UserWithoutPassword;
+}

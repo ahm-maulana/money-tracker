@@ -17,6 +17,8 @@ export const createAuthRoutes = (controller: AuthController) => {
 
   router.post("/refresh", asyncHandler(controller.refresh));
 
+  router.get("/session", asyncHandler(controller.session));
+
   router.post("/logout", asyncHandler(controller.logout));
 
   return router;

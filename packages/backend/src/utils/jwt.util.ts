@@ -106,6 +106,23 @@ export class JwtUtil {
     }
   }
 
+  static verifyRefreshTokenSafe(token: string): CustomJwtPayload | null {
+    try {
+      const verifyOptions: VerifyOptions = {
+        issuer: "money-tracker-api",
+        audience: "money-tracker-users",
+      };
+
+      return jwt.verify(
+        token,
+        config.jwt.refresh.secret,
+        verifyOptions
+      ) as CustomJwtPayload;
+    } catch {
+      return null;
+    }
+  }
+
   static generateTokenPair(user: {
     id: string;
     email: string;

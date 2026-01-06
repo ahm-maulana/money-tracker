@@ -6,6 +6,7 @@ import { JwtUtil } from "../utils/jwt.util";
 import {
   AuthResponse,
   excludePassword,
+  SessionResponse,
   UserWithoutPassword,
 } from "../types/auth.types";
 import { config } from "../config/config";
@@ -120,6 +121,39 @@ export class AuthService {
         accessToken: token.accessToken,
         refreshToken: token.refreshToken,
       },
+    };
+  }
+
+  async session(token: string): Promise<SessionResponse> {
+    // Verify old token
+    const decoded = JwtUtil.verifyRefreshTokenSafe(token);
+
+    if (!decoded) {
+      return {
+        isAuthenticated: false,
+      };
+    }
+
+    // Check if user exists
+    const user = await this.authRepository.findById(decoded.userId);
+
+    if (!user) {
+      return {
+        isAuthenticated: false,
+      };
+    }
+
+    // Generate new access token
+    const accessToken = JwtUtil.generateAccessToken({
+      id: user.id,
+      email: user.email,
+      name: user.name,
+    });
+
+    return {
+      isAuthenticated: true,
+      token: accessToken,
+      user: excludePassword(user),
     };
   }
 

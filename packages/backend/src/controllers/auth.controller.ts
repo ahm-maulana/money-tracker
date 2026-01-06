@@ -3,6 +3,7 @@ import { AuthService } from "../services/auth.service";
 import { LoginInput, RegisterInput } from "../validation/auth.validation";
 import { ResponseUtil } from "../utils/response.util";
 import { config } from "../config/config";
+import { SessionResponse } from "../types/auth.types";
 
 export class AuthController {
   constructor(private authService: AuthService) {}
@@ -53,6 +54,20 @@ export class AuthController {
       user,
       token: token.accessToken,
     });
+  };
+
+  session = async (req: Request, res: Response): Promise<void> => {
+    const cookies = req.cookies as { jwt: string };
+
+    if (!cookies.jwt) {
+      ResponseUtil.success<SessionResponse>(res, {
+        isAuthenticated: false,
+      });
+    }
+
+    const session = await this.authService.session(cookies.jwt);
+
+    ResponseUtil.success<SessionResponse>(res, session);
   };
 
   logout = async (req: Request, res: Response): Promise<void> => {
