@@ -1,5 +1,8 @@
 import { Category, PrismaClient } from "../generated/prisma/client";
-import { CreateCategoryInput } from "../validation/category.validation";
+import {
+  CreateCategoryInput,
+  UpdateCategoryInput,
+} from "../validation/category.validation";
 import { BaseRepository } from "./base.repository";
 
 export class CategoryRepository extends BaseRepository {
@@ -41,6 +44,20 @@ export class CategoryRepository extends BaseRepository {
         id: categoryId,
         userId,
       },
+    });
+  }
+
+  async update(
+    userId: string,
+    categoryId: string,
+    data: UpdateCategoryInput
+  ): Promise<Category> {
+    return this.prisma.category.update({
+      where: {
+        id: categoryId,
+        userId,
+      },
+      data,
     });
   }
 

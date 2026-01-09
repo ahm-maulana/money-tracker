@@ -143,6 +143,15 @@ export class AuthService {
       };
     }
 
+    // Check if old token exists in database
+    const storedToken = await this.refreshTokenRepository.findByToken(token);
+
+    if (!storedToken) {
+      return {
+        isAuthenticated: false,
+      };
+    }
+
     // Generate new access token
     const accessToken = JwtUtil.generateAccessToken({
       id: user.id,
