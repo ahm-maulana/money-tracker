@@ -48,11 +48,10 @@ export class CategoryService {
       throw new NotFoundError("Category not found.");
     }
 
-    const category = await this.categoryRepository.update(
-      userId,
-      categoryId,
-      data
-    );
+    const category = await this.categoryRepository.update(userId, categoryId, {
+      name: data.name,
+      color: data.color,
+    });
 
     return category;
   }
