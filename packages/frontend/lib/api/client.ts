@@ -4,6 +4,7 @@ import axios, {
   InternalAxiosRequestConfig,
 } from "axios";
 import { API_CONFIG } from "./config";
+import { tokenManager } from "../auth/token-manager";
 
 class ApiClient {
   private client: AxiosInstance;
@@ -21,7 +22,8 @@ class ApiClient {
       (config: InternalAxiosRequestConfig) => {
         // Add auth token if available
         if (typeof window !== "undefined") {
-          const token = localStorage.getItem("access_token");
+          const token = tokenManager.getToken();
+
           if (token && config.headers) {
             config.headers.Authorization = `Bearer ${token}`;
           }

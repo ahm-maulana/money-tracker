@@ -9,6 +9,7 @@ import {
   useState,
   useCallback,
 } from "react";
+import { tokenManager } from "../auth/token-manager";
 
 interface AuthContextType {
   user: User | null;
@@ -35,7 +36,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const checkAuth = useCallback(async () => {
     setIsLoading(true);
     try {
-      const response = await authApi.refresh();
+      const response = await authApi.session();
 
       if (!response.success) {
         throw new Error(response.error);
@@ -45,9 +46,18 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         throw new Error("No data received from server");
       }
 
-      setUser(response.data.user);
-      setToken(response.data.token);
+      const { isAuthenticated, user, token } = response.data;
+
+      if (!isAuthenticated) {
+        throw new Error("Unauthenticated.");
+      }
+
+      setUser(user);
+      tokenManager.setToken(token);
+      setToken(token);
     } catch (error) {
+      console.log(error);
+
       setUser(null);
       setToken(null);
       await authApi.logout();

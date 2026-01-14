@@ -5,17 +5,25 @@ import {
   UseFormReturn,
 } from "react-hook-form";
 
-type FormContainerProps<T extends FieldValues> = {
-  form: UseFormReturn<T>;
+type FormContainerProps<
+  TFieldValues extends FieldValues,
+  TContext = any,
+  TTransformedValues extends FieldValues = TFieldValues
+> = {
+  form: UseFormReturn<TFieldValues, TContext, TTransformedValues>;
   children: React.ReactNode;
-  onSubmit: SubmitHandler<T>;
+  onSubmit: SubmitHandler<TTransformedValues>;
 };
 
-function FormContainer<T extends FieldValues>({
+function FormContainer<
+  TFieldValues extends FieldValues,
+  TContext = any,
+  TTransformedValues extends FieldValues = TFieldValues
+>({
   form,
   children,
   onSubmit,
-}: FormContainerProps<T>) {
+}: FormContainerProps<TFieldValues, TContext, TTransformedValues>) {
   return (
     <FormProvider {...form}>
       <form

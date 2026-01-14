@@ -1,6 +1,7 @@
 import {
   ChartNoAxesColumn,
   ChartPie,
+  HandCoins,
   LayoutDashboard,
   LucideProps,
   Receipt,
@@ -27,6 +28,11 @@ export const mainNavItems: NavItem[] = [
     title: "Transactions",
     url: "/transactions",
     icon: Receipt,
+  },
+  {
+    title: "Categories",
+    url: "/categories",
+    icon: HandCoins,
   },
   {
     title: "Budgets",

@@ -1,7 +1,7 @@
-import { apiClient } from "@/lib/api";
 import { LoginInput, RegisterInput } from "./validation";
-import { AuthResponse, User } from "./types";
+import { AuthResponse, SessionResponse, User } from "./types";
 import { ApiResponse } from "@/types/api";
+import { apiClient } from "@/lib/api/client";
 
 export const authApi = {
   register: (data: RegisterInput) =>
@@ -9,5 +9,6 @@ export const authApi = {
   login: (credentials: LoginInput) =>
     apiClient.post<ApiResponse<AuthResponse>>("/auth/login", credentials),
   refresh: () => apiClient.post<ApiResponse<AuthResponse>>("/auth/refresh"),
+  session: () => apiClient.get<ApiResponse<SessionResponse>>("/auth/session"),
   logout: () => apiClient.post<void>("/auth/logout"),
 };
