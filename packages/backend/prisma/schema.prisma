@@ -50,6 +50,7 @@ model Category {
 
 model Transaction {
   id String @id @default(uuid())
+  name String
   amount Int
   type TransactionType
   description String?

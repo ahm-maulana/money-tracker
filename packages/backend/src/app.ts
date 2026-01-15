@@ -15,19 +15,30 @@ import { CategoryRepository } from "./repositories/category.repository";
 import { CategoryService } from "./services/category.service";
 import { CategoryController } from "./controllers/category.controller";
 import { createCategoryRoutes } from "./routes/category.routes";
+import { TransactionRepository } from "./repositories/transaction.repository";
+import { TransactionService } from "./services/transaction.service";
+import { TransactionController } from "./controllers/transaction.controller";
+import { createTransactionRoutes } from "./routes/transaction.routes";
+import { NotFoundError } from "./utils/error.util";
 export const createApp = (prisma: PrismaClient) => {
   // Repositories
   const authRepository = new AuthRepository(prisma);
   const refreshTokenRepository = new RefreshTokenRepository(prisma);
   const categoryRepository = new CategoryRepository(prisma);
+  const transactionRepository = new TransactionRepository(prisma);
 
   // Services
   const authService = new AuthService(authRepository, refreshTokenRepository);
   const categoryService = new CategoryService(categoryRepository);
+  const transactionService = new TransactionService(
+    transactionRepository,
+    categoryRepository
+  );
 
   // Controller
   const authController = new AuthController(authService);
   const categoryController = new CategoryController(categoryService);
+  const transactionController = new TransactionController(transactionService);
 
   const app = express();
 
@@ -56,11 +67,7 @@ export const createApp = (prisma: PrismaClient) => {
   app.use(express.json({ limit: "10mb" }));
   app.use(express.urlencoded({ extended: true }));
 
-  // Endpoints
-  app.use("/api/v1/auth", createAuthRoutes(authController));
-  app.use("/api/v1/categories", createCategoryRoutes(categoryController));
-
-  app.use("/", (_, res) => {
+  app.get("/", (_, res) => {
     res.json({
       message: "Money Tracker App API",
       version: config.api.version || "v1",
@@ -77,6 +84,19 @@ export const createApp = (prisma: PrismaClient) => {
       timestamp: new Date().toISOString(),
       environment: config.nodeEnv || "development",
     });
+  });
+
+  // Endpoints
+  app.use("/api/v1/auth", createAuthRoutes(authController));
+  app.use("/api/v1/categories", createCategoryRoutes(categoryController));
+  app.use(
+    "/api/v1/transactions",
+    createTransactionRoutes(transactionController)
+  );
+
+  // Catch-all for undefined routes
+  app.all("*", (req, _, next) => {
+    next(new NotFoundError(`Route ${req.method} ${req.originalUrl} not found`));
   });
 
   // Error handler
