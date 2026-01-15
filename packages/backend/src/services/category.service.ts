@@ -1,18 +1,24 @@
 import { Category } from "../generated/prisma/client";
 import { CategoryRepository } from "../repositories/category.repository";
-import { ConflictError, NotFoundError } from "../utils/error.util";
+import { TransactionRepository } from "../repositories/transaction.repository";
+import {
+  BadRequestError,
+  ConflictError,
+  ForbiddenError,
+  NotFoundError,
+} from "../utils/error.util";
 import {
   CreateCategoryInput,
   UpdateCategoryInput,
 } from "../validation/category.validation";
 
 export class CategoryService {
-  constructor(private categoryRepository: CategoryRepository) {}
+  constructor(
+    private categoryRepository: CategoryRepository,
+    private transactionRepository: TransactionRepository
+  ) {}
 
-  async createCategory(
-    userId: string,
-    data: CreateCategoryInput
-  ): Promise<Category> {
+  async create(userId: string, data: CreateCategoryInput): Promise<Category> {
     const existingCategory = await this.categoryRepository.findByName(
       userId,
       data.name
@@ -30,25 +36,30 @@ export class CategoryService {
     return category;
   }
 
-  async getAllCategories(userId: string): Promise<Category[]> {
+  async getAll(userId: string): Promise<Category[]> {
     return this.categoryRepository.findAll(userId);
   }
 
-  async updateCategory(
+  async update(
+    id: string,
     userId: string,
-    categoryId: string,
     data: UpdateCategoryInput
   ): Promise<Category> {
-    const existingCategory = await this.categoryRepository.findById(
-      userId,
-      categoryId
-    );
+    // Check if category exist
+    const existingCategory = await this.categoryRepository.findById(id);
 
     if (!existingCategory) {
       throw new NotFoundError("Category not found.");
     }
 
-    const category = await this.categoryRepository.update(userId, categoryId, {
+    // Check category ownership
+    if (existingCategory.userId !== userId) {
+      throw new ForbiddenError(
+        "Forbidden: You're not the owner of this category"
+      );
+    }
+
+    const category = await this.categoryRepository.update(id, {
       name: data.name,
       color: data.color,
     });
@@ -56,16 +67,32 @@ export class CategoryService {
     return category;
   }
 
-  async deleteCategory(userId: string, categoryId: string): Promise<Category> {
-    const existingCategory = await this.categoryRepository.findById(
-      userId,
-      categoryId
-    );
+  async delete(id: string, userId: string): Promise<Category> {
+    // Check if category exist
+    const existingCategory = await this.categoryRepository.findById(id);
 
     if (!existingCategory) {
       throw new NotFoundError("Category not found.");
     }
 
-    return this.categoryRepository.delete(userId, categoryId);
+    // Check category ownership
+    if (existingCategory.userId !== userId) {
+      throw new ForbiddenError(
+        "Forbidden: You're not the owner of this category"
+      );
+    }
+
+    // Check if category has transactions BEFORE deleting
+    const transactionCount = await this.transactionRepository.countByCategory(
+      id
+    );
+
+    if (transactionCount > 0) {
+      throw new BadRequestError(
+        "Cannot delete category because it has transactions"
+      );
+    }
+
+    return this.categoryRepository.delete(id);
   }
 }

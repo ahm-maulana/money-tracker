@@ -38,34 +38,27 @@ export class CategoryRepository extends BaseRepository {
     });
   }
 
-  async findById(userId: string, categoryId: string): Promise<Category | null> {
+  async findById(id: string): Promise<Category | null> {
     return this.prisma.category.findUnique({
       where: {
-        id: categoryId,
-        userId,
+        id,
       },
     });
   }
 
-  async update(
-    userId: string,
-    categoryId: string,
-    data: UpdateCategoryInput
-  ): Promise<Category> {
+  async update(id: string, data: UpdateCategoryInput): Promise<Category> {
     return this.prisma.category.update({
       where: {
-        id: categoryId,
-        userId,
+        id,
       },
       data,
     });
   }
 
-  async delete(userId: string, categoryId: string): Promise<Category> {
+  async delete(id: string): Promise<Category> {
     return this.prisma.category.delete({
       where: {
-        id: categoryId,
-        userId,
+        id,
       },
     });
   }

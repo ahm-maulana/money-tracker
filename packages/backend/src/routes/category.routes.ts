@@ -17,22 +17,22 @@ export const createCategoryRoutes = (controller: CategoryController) => {
   router.post(
     "/",
     validate(createCategorySchema),
-    asyncHandler(controller.createCategory)
+    asyncHandler(controller.create)
   );
 
-  router.get("/", asyncHandler(controller.getCategories));
+  router.get("/", asyncHandler(controller.getAll));
 
   router.patch(
     "/:id",
     validate(categoryParamsSchema, "params"),
     validate(updateCategorySchema),
-    asyncHandler(controller.updateCategory)
+    asyncHandler(controller.update)
   );
 
   router.delete(
     "/:id",
     validate(categoryParamsSchema, "params"),
-    asyncHandler(controller.deleteCategory)
+    asyncHandler(controller.delete)
   );
 
   return router;

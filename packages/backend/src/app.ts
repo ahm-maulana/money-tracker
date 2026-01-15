@@ -29,7 +29,10 @@ export const createApp = (prisma: PrismaClient) => {
 
   // Services
   const authService = new AuthService(authRepository, refreshTokenRepository);
-  const categoryService = new CategoryService(categoryRepository);
+  const categoryService = new CategoryService(
+    categoryRepository,
+    transactionRepository
+  );
   const transactionService = new TransactionService(
     transactionRepository,
     categoryRepository

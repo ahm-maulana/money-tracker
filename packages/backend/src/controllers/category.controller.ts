@@ -10,55 +10,36 @@ import { ResponseUtil } from "../utils/response.util";
 export class CategoryController {
   constructor(private categoryService: CategoryService) {}
 
-  createCategory = async (
-    req: AuthenticatedRequest,
-    res: Response
-  ): Promise<void> => {
+  create = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
     const { id: userId } = req.user;
     const categoryData = req.body as CreateCategoryInput;
 
-    const category = await this.categoryService.createCategory(
-      userId,
-      categoryData
-    );
+    const category = await this.categoryService.create(userId, categoryData);
 
     ResponseUtil.success(res, category, "Category created successfully.", 201);
   };
 
-  getCategories = async (
-    req: AuthenticatedRequest,
-    res: Response
-  ): Promise<void> => {
+  getAll = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
     const { id: userId } = req.user;
-    const categories = await this.categoryService.getAllCategories(userId);
+    const categories = await this.categoryService.getAll(userId);
 
     ResponseUtil.success(res, categories);
   };
 
-  updateCategory = async (
-    req: AuthenticatedRequest,
-    res: Response
-  ): Promise<void> => {
+  update = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
     const { id: userId } = req.user;
-    const { id: categoryId } = req.params as { id: string };
+    const { id } = req.params as { id: string };
     const data = req.body as UpdateCategoryInput;
-    const category = await this.categoryService.updateCategory(
-      userId,
-      categoryId,
-      data
-    );
+    const category = await this.categoryService.update(id, userId, data);
 
     ResponseUtil.success(res, category, "Category updated successfully.");
   };
 
-  deleteCategory = async (
-    req: AuthenticatedRequest,
-    res: Response
-  ): Promise<void> => {
+  delete = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
     const { id: userId } = req.user;
-    const { id: categoryId } = req.params as { id: string };
+    const { id } = req.params as { id: string };
 
-    await this.categoryService.deleteCategory(userId, categoryId);
+    await this.categoryService.delete(id, userId);
 
     ResponseUtil.success(res, null, "Category deleted successfully.");
   };

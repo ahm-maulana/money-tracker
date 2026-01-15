@@ -1,7 +1,11 @@
 import { CategoryRepository } from "../repositories/category.repository";
 import { TransactionRepository } from "../repositories/transaction.repository";
 import { TransactionResponse } from "../types/transaction.types";
-import { NotFoundError, ValidationError } from "../utils/error.util";
+import {
+  ForbiddenError,
+  NotFoundError,
+  ValidationError,
+} from "../utils/error.util";
 import { TransactionInput } from "../validation/transaction.validation";
 
 export class TransactionService {
@@ -15,10 +19,7 @@ export class TransactionService {
     data: TransactionInput
   ): Promise<TransactionResponse> {
     // Check if category exist
-    const category = await this.categoryRepository.findById(
-      userId,
-      data.categoryId
-    );
+    const category = await this.categoryRepository.findById(data.categoryId);
 
     if (!category) {
       throw new ValidationError("Category ID not exist");
@@ -39,13 +40,16 @@ export class TransactionService {
   }
 
   async getById(id: string, userId: string): Promise<TransactionResponse> {
-    const transaction = await this.transactionRepository.findByIdAndUserId(
-      id,
-      userId
-    );
+    const transaction = await this.transactionRepository.findById(id);
 
     if (!transaction) {
       throw new NotFoundError("Transaction not found");
+    }
+
+    if (transaction.userId !== userId) {
+      throw new ForbiddenError(
+        "Forbidden: You're not the owner of this transaction"
+      );
     }
 
     return transaction;
@@ -57,24 +61,33 @@ export class TransactionService {
     data: TransactionInput
   ): Promise<TransactionResponse> {
     // Check if transaction exist
-    const existingTransaction =
-      await this.transactionRepository.findByIdAndUserId(id, userId);
+    const existingTransaction = await this.transactionRepository.findById(id);
 
     if (!existingTransaction) {
       throw new NotFoundError("Transaction not found.");
     }
 
+    if (existingTransaction.userId !== userId) {
+      throw new ForbiddenError(
+        "Forbidden: You're not the owner of this transaction"
+      );
+    }
+
     // Check if category exist
-    const category = await this.categoryRepository.findById(
-      userId,
-      data.categoryId
-    );
+    const category = await this.categoryRepository.findById(data.categoryId);
 
     if (!category) {
       throw new ValidationError("Category ID not exist");
     }
 
-    const transaction = await this.transactionRepository.update(id, userId, {
+    // Check category ownership
+    if (category.userId !== userId) {
+      throw new ForbiddenError(
+        "Forbidden: You're not the owner of this category"
+      );
+    }
+
+    const transaction = await this.transactionRepository.update(id, {
       ...data,
       type: category.type,
     });
@@ -83,15 +96,18 @@ export class TransactionService {
   }
 
   async delete(id: string, userId: string): Promise<void> {
-    const existingTransaction = this.transactionRepository.findByIdAndUserId(
-      id,
-      userId
-    );
+    const existingTransaction = await this.transactionRepository.findById(id);
 
     if (!existingTransaction) {
       throw new NotFoundError("Transaction not found.");
     }
 
-    await this.transactionRepository.delete(id, userId);
+    if (existingTransaction.userId !== userId) {
+      throw new ForbiddenError(
+        "Forbidden: You're not the owner of this transaction"
+      );
+    }
+
+    await this.transactionRepository.delete(id);
   }
 }

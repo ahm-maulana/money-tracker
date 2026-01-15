@@ -1,4 +1,5 @@
 import { PrismaClient, User } from "../generated/prisma/client";
+import { RegisterInput } from "../validation/auth.validation";
 import { BaseRepository } from "./base.repository";
 
 export class AuthRepository extends BaseRepository {
@@ -6,7 +7,7 @@ export class AuthRepository extends BaseRepository {
     super(prisma);
   }
 
-  async create(data: any): Promise<User> {
+  async create(data: Omit<RegisterInput, "confirmPassword">): Promise<User> {
     return this.prisma.user.create({
       data,
     });

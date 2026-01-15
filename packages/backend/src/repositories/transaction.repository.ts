@@ -20,6 +20,7 @@ const TRANSACTION_SELECT = {
     },
   },
   updatedAt: true,
+  userId: true,
 } as const;
 
 export class TransactionRepository extends BaseRepository {
@@ -49,14 +50,10 @@ export class TransactionRepository extends BaseRepository {
     });
   }
 
-  async findByIdAndUserId(
-    id: string,
-    userId: string
-  ): Promise<TransactionResponse | null> {
-    return this.prisma.transaction.findFirst({
+  async findById(id: string): Promise<TransactionResponse | null> {
+    return this.prisma.transaction.findUnique({
       where: {
         id,
-        userId,
       },
       select: TRANSACTION_SELECT,
     });
@@ -64,26 +61,31 @@ export class TransactionRepository extends BaseRepository {
 
   async update(
     id: string,
-    userId: string,
     data: TransactionInput & { type: TransactionType }
   ): Promise<TransactionResponse> {
     return this.prisma.transaction.update({
       where: {
         id,
-        userId,
       },
       data,
       select: TRANSACTION_SELECT,
     });
   }
 
-  async delete(id: string, userId: string): Promise<TransactionResponse> {
+  async delete(id: string): Promise<TransactionResponse> {
     return this.prisma.transaction.delete({
       where: {
         id,
-        userId,
       },
       select: TRANSACTION_SELECT,
+    });
+  }
+
+  async countByCategory(categoryId: string): Promise<number> {
+    return this.prisma.transaction.count({
+      where: {
+        categoryId,
+      },
     });
   }
 }

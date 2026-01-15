@@ -9,4 +9,5 @@ export interface TransactionResponse {
     type: string;
   };
   updatedAt: Date;
+  userId: string;
 }
