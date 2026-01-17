@@ -1,7 +1,10 @@
 import { Response } from "express";
 import { TransactionService } from "../services/transaction.service";
 import { AuthenticatedRequest } from "../types/api.types";
-import { TransactionInput } from "../validation/transaction.validation";
+import {
+  TransactionInput,
+  TransactionQuery,
+} from "../validation/transaction.validation";
 import { ResponseUtil } from "../utils/response.util";
 
 export class TransactionController {
@@ -27,10 +30,35 @@ export class TransactionController {
 
   getAll = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
     const { id: userId } = req.user;
+    const { page, limit, ...queryData } =
+      req.query as unknown as TransactionQuery;
 
-    const transactions = await this.transactionService.getAll(userId);
+    const { data, total } = await this.transactionService.getAll(userId, {
+      page: page ?? 1,
+      limit: limit ?? 10,
+      ...queryData,
+    });
 
-    ResponseUtil.success(res, transactions);
+    const totalPages = Math.ceil(total / (limit ?? 10));
+
+    ResponseUtil.success(
+      res,
+      data,
+      "Transactions retrieved successfully.",
+      200,
+      {
+        timestamp: new Date().toISOString(),
+        pagination: {
+          page: page ?? 1,
+          limit: limit ?? 10,
+          total,
+          totalPages,
+          hasNext: page < totalPages,
+          hasPrev: page > 1,
+        },
+        filters: queryData,
+      }
+    );
   };
 
   getById = async (req: AuthenticatedRequest, res: Response): Promise<void> => {

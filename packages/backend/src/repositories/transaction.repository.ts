@@ -1,12 +1,15 @@
-import { PrismaClient } from "../generated/prisma/client";
+import { Prisma, PrismaClient } from "../generated/prisma/client";
+import { TRANSACTION_TYPE_ARRAY } from "../types/common";
 import { TransactionResponse } from "../types/transaction.types";
 import {
   TransactionInput,
-  TransactionType,
+  TransactionQuery,
 } from "../validation/transaction.validation";
 import { BaseRepository } from "./base.repository";
 
-const TRANSACTION_SELECT = {
+type TransactionType = (typeof TRANSACTION_TYPE_ARRAY)[number];
+
+const TRANSACTION_SELECT: Prisma.TransactionSelect = {
   id: true,
   name: true,
   amount: true,
@@ -41,13 +44,63 @@ export class TransactionRepository extends BaseRepository {
     });
   }
 
-  async findAll(userId: string): Promise<TransactionResponse[]> {
-    return this.prisma.transaction.findMany({
-      where: {
-        userId,
-      },
-      select: TRANSACTION_SELECT,
-    });
+  async findAll(
+    userId: string,
+    options: TransactionQuery
+  ): Promise<{
+    data: TransactionResponse[];
+    total: number;
+  }> {
+    const skip = (options.page - 1) * options.limit;
+    const amountFilter: Prisma.IntFilter | undefined =
+      options.minAmount || options.maxAmount
+        ? {
+            ...(options.minAmount && { gte: options.minAmount }),
+            ...(options.maxAmount && { lte: options.maxAmount }),
+          }
+        : undefined;
+    const where: Prisma.TransactionWhereInput = {
+      userId,
+      ...(options.type && { type: options.type }),
+      ...(options.categoryId && { categoryId: options.categoryId }),
+      ...(amountFilter && {
+        amount: amountFilter,
+      }),
+      ...(options.search && {
+        OR: [
+          {
+            name: {
+              contains: options.search,
+              mode: "insensitive" as const,
+            },
+          },
+          {
+            description: {
+              contains: options.search,
+              mode: "insensitive" as const,
+            },
+          },
+        ],
+      }),
+    };
+
+    const [data, total] = await Promise.all([
+      this.prisma.transaction.findMany({
+        where,
+        skip,
+        take: options.limit,
+        select: TRANSACTION_SELECT,
+        orderBy: {
+          [options.sortBy]: options.sortOrder,
+        },
+      }),
+      this.prisma.transaction.count({ where }),
+    ]);
+
+    return {
+      data,
+      total,
+    };
   }
 
   async findById(id: string): Promise<TransactionResponse | null> {

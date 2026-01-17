@@ -1,29 +1,43 @@
 import { Response } from "express";
 
-export interface ApiResponse<T = any> {
+export interface ApiResponse<Data = any, Meta = Record<string, any>> {
   success: boolean;
-  data?: T;
+  data?: Data;
   message?: string;
   error?: string | string[];
-  pagination?: {
-    page: number;
-    limit: number;
-    total: number;
-    totalPages: number;
+  meta?: {
+    timestamp: string;
+    pagination?: Pagination;
+    filters?: Meta;
   };
 }
 
+export interface Pagination {
+  page: number;
+  limit: number;
+  total: number;
+  totalPages: number;
+  hasNext: boolean;
+  hasPrev: boolean;
+}
+
 export class ResponseUtil {
-  static success<T>(
+  static success<Data, Meta>(
     res: Response,
-    data?: T,
+    data?: Data,
     message?: string,
-    statusCode: number = 200
+    statusCode: number = 200,
+    meta?: {
+      timestamp: string;
+      pagination?: Pagination;
+      filters?: Meta;
+    }
   ) {
-    const response: ApiResponse<T> = {
+    const response: ApiResponse<Data, Meta> = {
       success: true,
-      data,
       message,
+      data,
+      meta,
     };
 
     return res.status(statusCode).json(response);

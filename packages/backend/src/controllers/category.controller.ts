@@ -2,6 +2,7 @@ import { CategoryService } from "../services/category.service";
 import { Response } from "express";
 import { AuthenticatedRequest } from "../types/api.types";
 import {
+  CategoryQuery,
   CreateCategoryInput,
   UpdateCategoryInput,
 } from "../validation/category.validation";
@@ -21,9 +22,30 @@ export class CategoryController {
 
   getAll = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
     const { id: userId } = req.user;
-    const categories = await this.categoryService.getAll(userId);
+    const query = req.query as unknown as CategoryQuery;
 
-    ResponseUtil.success(res, categories);
+    const { page, limit, ...queryData } = query;
+
+    const { data, total } = await this.categoryService.getAll(userId, {
+      page: page ?? 1,
+      limit: limit ?? 10,
+      ...queryData,
+    });
+
+    const totalPages = Math.ceil(total / (query.limit ?? 10));
+
+    ResponseUtil.success(res, data, "Categories retrieved successfully.", 200, {
+      timestamp: new Date().toISOString(),
+      pagination: {
+        page: page ?? 1,
+        limit: limit ?? 10,
+        total,
+        totalPages,
+        hasNext: page < totalPages,
+        hasPrev: page > 1,
+      },
+      filters: queryData,
+    });
   };
 
   update = async (req: AuthenticatedRequest, res: Response): Promise<void> => {

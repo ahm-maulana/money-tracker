@@ -7,7 +7,10 @@ export const validate =
   async (req: Request, res: Response, next: NextFunction) => {
     try {
       const data = req[source];
-      await schema.parseAsync(data);
+      const validatedData = await schema.parseAsync(data);
+
+      req[source] = validatedData;
+
       next();
     } catch (error) {
       if (error instanceof ZodError) {

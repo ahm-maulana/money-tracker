@@ -2,6 +2,7 @@ import { config } from "../src/config/config";
 import { PrismaPg } from "@prisma/adapter-pg";
 import { PrismaClient } from "../src/generated/prisma/client";
 import * as seedData from "./seed-data.json";
+import bcrypt from "bcrypt";
 
 // Initialize Prisma Client with adapter
 const connectionString = config.supabase.databaseUrl;
@@ -20,17 +21,29 @@ async function main() {
 
     // Seed users
     console.log("👤 Seeding users...");
+    const { password, ...userData } = seedData.users[0];
+
+    // Password hashing
+    const saltRounds = 10;
+    const hashedPassword = await bcrypt.hash(password, saltRounds);
+
     const user = await prisma.user.create({
-      data: seedData.users[0],
+      data: {
+        ...userData,
+        password: hashedPassword,
+      },
     });
     console.log(`✅ Created user: ${user.name} (${user.email})`);
 
     // Seed categories
     console.log("📁 Seeding categories...");
     for (const categoryData of seedData.categories) {
+      const { type, ...restData } = categoryData;
+
       const category = await prisma.category.create({
         data: {
-          ...categoryData,
+          ...restData,
+          type: type as "INCOME" | "EXPENSE",
           userId: user.id,
         },
       });
@@ -42,6 +55,7 @@ async function main() {
     for (const transactionData of seedData.transactions) {
       const transaction = await prisma.transaction.create({
         data: {
+          name: transactionData.name,
           amount: transactionData.amount,
           type: transactionData.type as "INCOME" | "EXPENSE",
           description: transactionData.description,

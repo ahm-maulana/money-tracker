@@ -1,5 +1,6 @@
-import { Category, PrismaClient } from "../generated/prisma/client";
+import { Category, Prisma, PrismaClient } from "../generated/prisma/client";
 import {
+  CategoryQuery,
   CreateCategoryInput,
   UpdateCategoryInput,
 } from "../validation/category.validation";
@@ -18,12 +19,39 @@ export class CategoryRepository extends BaseRepository {
     });
   }
 
-  async findAll(userId: string): Promise<Category[]> {
-    return this.prisma.category.findMany({
-      where: {
-        userId,
-      },
-    });
+  async findAll(
+    userId: string,
+    options: CategoryQuery
+  ): Promise<{ data: Category[]; total: number }> {
+    const skip = (options.page - 1) * options.limit;
+
+    const where: Prisma.CategoryWhereInput = {
+      userId,
+      ...(options.type && { type: options.type }),
+      ...(options.search && {
+        name: {
+          contains: options.search,
+          mode: "insensitive" as const,
+        },
+      }),
+    };
+
+    const [data, total] = await Promise.all([
+      this.prisma.category.findMany({
+        where,
+        skip,
+        take: options.limit,
+        orderBy: {
+          [options.sortBy]: options.sortOrder,
+        },
+      }),
+      this.prisma.category.count({ where }),
+    ]);
+
+    return {
+      data,
+      total,
+    };
   }
 
   async findByName(userId: string, name: string): Promise<Category | null> {

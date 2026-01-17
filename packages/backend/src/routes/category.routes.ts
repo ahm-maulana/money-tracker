@@ -3,6 +3,7 @@ import { CategoryController } from "../controllers/category.controller";
 import { validate } from "../middleware/validation.middleware";
 import {
   categoryParamsSchema,
+  categoryQuerySchema,
   createCategorySchema,
   updateCategorySchema,
 } from "../validation/category.validation";
@@ -20,7 +21,11 @@ export const createCategoryRoutes = (controller: CategoryController) => {
     asyncHandler(controller.create)
   );
 
-  router.get("/", asyncHandler(controller.getAll));
+  router.get(
+    "/",
+    validate(categoryQuerySchema, "query"),
+    asyncHandler(controller.getAll)
+  );
 
   router.patch(
     "/:id",

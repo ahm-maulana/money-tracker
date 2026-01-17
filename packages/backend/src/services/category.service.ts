@@ -8,6 +8,7 @@ import {
   NotFoundError,
 } from "../utils/error.util";
 import {
+  CategoryQuery,
   CreateCategoryInput,
   UpdateCategoryInput,
 } from "../validation/category.validation";
@@ -36,8 +37,11 @@ export class CategoryService {
     return category;
   }
 
-  async getAll(userId: string): Promise<Category[]> {
-    return this.categoryRepository.findAll(userId);
+  async getAll(
+    userId: string,
+    options: CategoryQuery
+  ): Promise<{ data: Category[]; total: number }> {
+    return this.categoryRepository.findAll(userId, options);
   }
 
   async update(

@@ -3,6 +3,7 @@ import { authMiddleware } from "../middleware/auth.middleware";
 import { validate } from "../middleware/validation.middleware";
 import {
   transactionParamsSchema,
+  transactionQuerySchema,
   transactionSchema,
 } from "../validation/transaction.validation";
 import { asyncHandler } from "../middleware/error.middleware";
@@ -18,7 +19,11 @@ export const createTransactionRoutes = (controller: TransactionController) => {
     asyncHandler(controller.create)
   );
 
-  router.get("/", asyncHandler(controller.getAll));
+  router.get(
+    "/",
+    validate(transactionQuerySchema, "query"),
+    asyncHandler(controller.getAll)
+  );
 
   router.get(
     "/:id",

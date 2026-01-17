@@ -2,53 +2,59 @@
   "users": [
     {
       "id": "550e8400-e29b-41d4-a716-446655440001",
-      "email": "john.doe@example.com",
+      "email": "admin@test.com",
       "name": "John Doe",
-      "password": "hashed_password_123",
-      "createdAt": "2024-01-01T10:00:00Z",
-      "updatedAt": "2024-01-15T10:00:00Z"
+      "password": "secretpassword"
     }
   ],
   "categories": [
     {
       "id": "660e8400-e29b-41d4-a716-446655440001",
       "name": "Salary",
+      "type": "INCOME",
       "userId": "550e8400-e29b-41d4-a716-446655440001"
     },
     {
       "id": "660e8400-e29b-41d4-a716-446655440002",
       "name": "Freelance",
+      "type": "INCOME",
       "userId": "550e8400-e29b-41d4-a716-446655440001"
     },
     {
       "id": "660e8400-e29b-41d4-a716-446655440003",
       "name": "Food & Groceries",
+      "type": "EXPENSE",
       "userId": "550e8400-e29b-41d4-a716-446655440001"
     },
     {
       "id": "660e8400-e29b-41d4-a716-446655440004",
       "name": "Transportation",
+      "type": "EXPENSE",
       "userId": "550e8400-e29b-41d4-a716-446655440001"
     },
     {
       "id": "660e8400-e29b-41d4-a716-446655440005",
       "name": "Entertainment",
+      "type": "EXPENSE",
       "userId": "550e8400-e29b-41d4-a716-446655440001"
     },
     {
       "id": "660e8400-e29b-41d4-a716-446655440006",
       "name": "Utilities",
+      "type": "EXPENSE",
       "userId": "550e8400-e29b-41d4-a716-446655440001"
     },
     {
       "id": "660e8400-e29b-41d4-a716-446655440007",
       "name": "Healthcare",
+      "type": "EXPENSE",
       "userId": "550e8400-e29b-41d4-a716-446655440001"
     }
   ],
   "transactions": [
     {
       "id": "770e8400-e29b-41d4-a716-446655440001",
+      "name": "Monthly salary from tech company",
       "amount": 500000,
       "type": "INCOME",
       "description": "Monthly salary from tech company",
@@ -60,6 +66,7 @@
     },
     {
       "id": "770e8400-e29b-41d4-a716-446655440002",
+      "name": "Freelance web development project",
       "amount": 150000,
       "type": "INCOME",
       "description": "Freelance web development project",
@@ -71,6 +78,7 @@
     },
     {
       "id": "770e8400-e29b-41d4-a716-446655440003",
+      "name": "Part-time consulting gig",
       "amount": 75000,
       "type": "INCOME",
       "description": "Part-time consulting gig",
@@ -82,6 +90,7 @@
     },
     {
       "id": "770e8400-e29b-41d4-a716-446655440004",
+      "name": "Cash payment for mobile app design",
       "amount": 50000,
       "type": "INCOME",
       "description": "Cash payment for mobile app design",
@@ -93,6 +102,7 @@
     },
     {
       "id": "770e8400-e29b-41d4-a716-446655440005",
+      "name": "Sold old laptop online",
       "amount": 25000,
       "type": "INCOME",
       "description": "Sold old laptop online",
@@ -104,6 +114,7 @@
     },
     {
       "id": "770e8400-e29b-41d4-a716-446655440006",
+      "name": "Weekly grocery shopping at supermarket",
       "amount": 45000,
       "type": "EXPENSE",
       "description": "Weekly grocery shopping at supermarket",
@@ -115,6 +126,7 @@
     },
     {
       "id": "770e8400-e29b-41d4-a716-446655440007",
+      "name": "Monthly train pass",
       "amount": 15000,
       "type": "EXPENSE",
       "description": "Monthly train pass",
@@ -126,6 +138,7 @@
     },
     {
       "id": "770e8400-e29b-41d4-a716-446655440008",
+      "name": "Concert tickets with friends",
       "amount": 35000,
       "type": "EXPENSE",
       "description": "Concert tickets with friends",
@@ -137,6 +150,7 @@
     },
     {
       "id": "770e8400-e29b-41d4-a716-446655440009",
+      "name": "Monthly electricity and water bills",
       "amount": 120000,
       "type": "EXPENSE",
       "description": "Monthly electricity and water bills",
@@ -148,6 +162,7 @@
     },
     {
       "id": "770e8400-e29b-41d4-a716-446655440010",
+      "name": "Doctor consultation and medicine",
       "amount": 85000,
       "type": "EXPENSE",
       "description": "Doctor consultation and medicine",

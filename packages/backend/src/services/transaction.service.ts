@@ -6,7 +6,10 @@ import {
   NotFoundError,
   ValidationError,
 } from "../utils/error.util";
-import { TransactionInput } from "../validation/transaction.validation";
+import {
+  TransactionInput,
+  TransactionQuery,
+} from "../validation/transaction.validation";
 
 export class TransactionService {
   constructor(
@@ -33,8 +36,14 @@ export class TransactionService {
     return transaction;
   }
 
-  async getAll(userId: string): Promise<TransactionResponse[]> {
-    const transactions = await this.transactionRepository.findAll(userId);
+  async getAll(
+    userId: string,
+    options: TransactionQuery
+  ): Promise<{ data: TransactionResponse[]; total: number }> {
+    const transactions = await this.transactionRepository.findAll(
+      userId,
+      options
+    );
 
     return transactions;
   }
